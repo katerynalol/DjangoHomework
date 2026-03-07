@@ -48,6 +48,21 @@ class Task(models.Model):
         auto_now_add=True
     )
 
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        db_table = 'task_manager_task'
+        verbose_name = "Task"
+        ordering = ['-created_at']
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=['title'],
+                name='unique_task'
+            )
+        ]
+
 
 class SubTask(models.Model):
     title: str = models.CharField(
@@ -79,6 +94,21 @@ class SubTask(models.Model):
         auto_now_add=True
     )
 
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        db_table = 'task_manager_subtask'
+        verbose_name = "SubTask"
+        ordering = ['-created_at']
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=['title', 'task'],
+                name='unique_subtask'
+            )
+        ]
+
 
 class Category(models.Model):
     name: str = models.CharField(
@@ -86,3 +116,16 @@ class Category(models.Model):
         unique=True,
         verbose_name="Название категории"
     )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = 'task_manager_category'
+        verbose_name = "Category"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name'],
+                name='unique_category'
+            )
+        ]
