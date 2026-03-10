@@ -78,10 +78,12 @@ class SubTask(models.Model):
     )
     task = models.ForeignKey(
         'Task',
-        on_delete=models.PROTECT,
-        related_name='subtasks'
+        on_delete=models.CASCADE,
+        related_name='subtasks',
+        verbose_name='Основная задача'
     )
     status:str = models.CharField(
+        verbose_name="Статус подзадачи",
         max_length=20,
         choices=STATUS_CHOICES,
         default="New"
