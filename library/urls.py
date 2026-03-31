@@ -22,6 +22,9 @@ from my_app.views.task import (create_task,
                               get_task_by_id,
                               get_stat
                                )
+from my_app.views.subtask import (SubTaskListCreateView,
+                                SubTaskDetailUpdateDeleteView
+                               )
 
 
 urlpatterns = [
@@ -29,5 +32,8 @@ urlpatterns = [
     path('create-task/', create_task),
     path('tasks/', get_all_tasks),
     path('tasks/<int:pk>/', get_task_by_id),
-    path('tasks/stat/', get_stat)
+    path('tasks/stat/', get_stat),
+
+    path('subtasks/', SubTaskListCreateView.as_view()),
+    path('subtasks/<int:pk>/', SubTaskDetailUpdateDeleteView.as_view()),
 ]
