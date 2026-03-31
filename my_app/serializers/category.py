@@ -20,7 +20,7 @@ class CategoryCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data: dict[str, Any]) -> Category:
         name_category = Category.objects.filter(
-            name=validated_data['name']).exists()
+            name__iexact=validated_data['name']).exists()
         if name_category:
             raise serializers.ValidationError(
                 "Такая категория уже существует")
@@ -28,12 +28,18 @@ class CategoryCreateSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data) -> Category:
         name_category = Category.objects.filter(
-            name=validated_data['name']
+            name__iexact=validated_data['name']
         ).exclude(id=instance.id).exists()
         if name_category:
             raise serializers.ValidationError(
                 "Такая категория уже существует"
             )
-        instance.name = validated_data['name']
+
+        # instance.name = validated_data['name']
+        # instance.save()
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
         instance.save()
+
         return instance
