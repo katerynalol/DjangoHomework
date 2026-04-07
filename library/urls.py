@@ -17,22 +17,22 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from my_app.views.task import (TaskListAPIView,
-                              get_task_by_id,
+from my_app.views.task import (TaskListCreateGenericView,
+                              TaskDetailGenericView,
                               get_stat
                                )
-from my_app.views.subtask import (SubTaskListAPIView,
-                                SubTaskDetailUpdateDeleteView
+from my_app.views.subtask import (SubTaskListCreateGenericView,
+                                SubTaskDetailGenericView
                                )
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('task/', TaskListAPIView.as_view()),
-    path('tasks/<int:pk>/', get_task_by_id),
+    path('task/', TaskListCreateGenericView.as_view()),
+    path('tasks/<int:pk>/', TaskDetailGenericView.as_view()),
     path('tasks/stat/', get_stat),
 
-    path('subtasks/', SubTaskListAPIView.as_view()),
-    path('subtasks/<int:pk>/', SubTaskDetailUpdateDeleteView.as_view()),
+    path('subtasks/', SubTaskListCreateGenericView.as_view()),
+    path('subtasks/<int:pk>/', SubTaskDetailGenericView.as_view()),
 ]

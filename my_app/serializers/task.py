@@ -11,7 +11,8 @@ class TaskSerializer(serializers.ModelSerializer):
         "title",
         "description",
         "status",
-        "deadline"
+        "deadline",
+        "created_at"
     ]
 
 # Задание 3: Использование вложенных сериализаторов
