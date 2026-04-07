@@ -30,8 +30,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('task/', TaskListCreateGenericView.as_view()),
-    path('tasks/<int:pk>/', TaskDetailGenericView.as_view()),
-    path('tasks/stat/', get_stat),
+    path('task/<int:pk>/', TaskDetailGenericView.as_view()),
+    path('task/stat/', get_stat),
 
     path('subtasks/', SubTaskListCreateGenericView.as_view()),
     path('subtasks/<int:pk>/', SubTaskDetailGenericView.as_view()),
