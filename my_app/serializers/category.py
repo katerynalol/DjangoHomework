@@ -12,6 +12,16 @@ from rest_framework import serializers
 from my_app.models import Category
 
 
+class CategoryCountSerializer(serializers.ModelSerializer):
+    task_count = serializers.IntegerField(
+        required=False,
+        read_only=True)
+
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'task_count', 'is_deleted']
+
+
 class CategoryCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category

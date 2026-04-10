@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 
 from my_app.views.task import (TaskListCreateGenericView,
                               TaskDetailGenericView,
@@ -24,7 +25,10 @@ from my_app.views.task import (TaskListCreateGenericView,
 from my_app.views.subtask import (SubTaskListCreateGenericView,
                                 SubTaskDetailGenericView
                                )
+from my_app.views.category import CategoryViewSet
 
+router = DefaultRouter()
+router.register('categories', CategoryViewSet, 'categories')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -36,3 +40,5 @@ urlpatterns = [
     path('subtasks/', SubTaskListCreateGenericView.as_view()),
     path('subtasks/<int:pk>/', SubTaskDetailGenericView.as_view()),
 ]
+
+urlpatterns += router.urls

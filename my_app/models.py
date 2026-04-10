@@ -1,11 +1,8 @@
 from datetime import datetime
-from decimal import Decimal
 
-from django.contrib.auth.base_user import AbstractBaseUser
-# from django.contrib.auth.models import User
-from django.contrib.auth.models import PermissionsMixin, UserManager
 from django.db import models
 from django.core.validators import MinLengthValidator, MaxLengthValidator
+from django.utils import timezone
 
 
 STATUS_CHOICES = [
@@ -15,6 +12,14 @@ STATUS_CHOICES = [
     ("Blocked", "Blocked"),
     ("Done", "Finished"),
     ]
+
+
+class CategoryManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_deleted=False)
+
+    def get_all_with_deleted(self):
+        return super().get_queryset()
 
 
 class Task(models.Model):
@@ -111,13 +116,30 @@ class SubTask(models.Model):
             )
         ]
 
-
+# Задание 2: Реализация мягкого удаления категорий
+# Шаги для выполнения:
+# Добавьте два новых поля в вашу модель Category, если таких ещё не было.
+# В модели Category добавьте поля is_deleted(Boolean, default False) и deleted_at(DateTime, null=true)
+# Переопределите метод удаления, чтобы он обновлял новые поля к соответствующим значениям: is_deleted=True и дата и время на момент “удаления” записи
+# Переопределите менеджера модели Category
+# В менеджере модели переопределите метод get_queryset(), чтобы он по умолчанию выдавал только те записи, которые не “удалены” из базы.
 class Category(models.Model):
     name: str = models.CharField(
         max_length=50,
         unique=True,
         verbose_name="Название категории"
     )
+    is_deleted = models.BooleanField(
+        default=False
+    )
+    deleted_at: datetime = models.DateTimeField(
+        verbose_name="Дата и время удаления",
+        null=True,
+        blank=True
+    )
+
+    objects = CategoryManager()
+    all_objects = models.Manager()
 
     def __str__(self):
         return self.name
@@ -131,3 +153,8 @@ class Category(models.Model):
                 name='unique_category'
             )
         ]
+
+    def delete(self, using = None, keep_parents = False):
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save()
