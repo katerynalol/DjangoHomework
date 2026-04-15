@@ -121,6 +121,87 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'paginators.MyCustomCursorPagination',
+}
+
+LOGS_DIR = BASE_DIR / 'logs'
+LOGS_DIR.mkdir(parents=True, exist_ok=True)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'formatters': {
+
+        'simple': {
+            'format': '[{levelname}] | {asctime}  --  {name}:  ({message})',
+            'style': '{',
+        },
+
+        'verbose': {
+            "format": "[{levelname}] {asctime} {name} | module={module} | func={funcName} | line={lineno:d} | pid={process:d} | tid={thread:d} | {message}",
+            'style': '{',
+        },
+
+        "sql": {
+            "format": "[{levelname}] {asctime} {name} | duration={duration} | sql={message}",
+            "style": "{",
+        },
+    },
+
+
+    'handlers': {
+
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+            'level': 'INFO'
+        },
+
+        'http_file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOGS_DIR / "http_logs.log",
+            'maxBytes': 10 * 1024 * 1024,
+            'backupCount': 5,
+            'formatter': 'verbose',
+            'level': 'DEBUG',
+            'encoding': 'utf-8',
+        },
+
+        'db_file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOGS_DIR / "db_logs.log",
+            'maxBytes': 10 * 1024 * 1024,
+            'backupCount': 5,
+            'formatter': 'sql',
+            'level': 'DEBUG',
+            'encoding': 'utf-8',
+        },
+    },
+
+
+    'loggers': {
+
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+
+        'django.request': {
+            'handlers': ['http_file'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+
+        'django.db.backends': {
+            'handlers': ['db_file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
