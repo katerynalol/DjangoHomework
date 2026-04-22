@@ -1,5 +1,5 @@
 from django.db.models import QuerySet
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from django.db.models import Count
 from datetime import datetime
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
 from my_app.serializers import TaskSerializer
 from my_app.models import Task
@@ -126,6 +127,7 @@ from my_app.models import Task
 
 
 @api_view(["GET"])
+@permission_classes([IsAdminUser])
 def get_stat(request: Request)-> Response:
     task_count = Task.objects.all().count()
 
@@ -145,31 +147,24 @@ def get_stat(request: Request)-> Response:
         status=status.HTTP_200_OK
     )
 # ----------------------------------------------------------------------------------------------------------------------
-# Задание 1: Замена представлений для задач (Tasks) на Generic Views
-# Шаги для выполнения:
-# Замените классы представлений для задач на Generic Views:
-# Используйте ListCreateAPIView для создания и получения списка задач.
-# Используйте RetrieveUpdateDestroyAPIView для получения, обновления и удаления задач.
-# Реализуйте фильтрацию, поиск и сортировку:
-# Реализуйте фильтрацию по полям status и deadline.
-# Реализуйте поиск по полям title и description.
-# Добавьте сортировку по полю created_at.
+
 
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from django.db.models import Q
 
 
-class TaskPagination(PageNumberPagination):
-    page_size = 5
-    page_size_query_param = 'page_size'
-    max_page_size = 100
+# class TaskPagination(PageNumberPagination):
+#     page_size = 5
+#     page_size_query_param = 'page_size'
+#     max_page_size = 100
 
 
 class TaskListCreateGenericView(ListCreateAPIView):
 
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    pagination_class = TaskPagination
+    # pagination_class = TaskPagination
+    permission_classes = [IsAuthenticated]
 
     DAY_MAPPING = {
         'понедельник': 2,
@@ -218,3 +213,4 @@ class TaskListCreateGenericView(ListCreateAPIView):
 class TaskDetailGenericView(RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+    permission_classes = [IsAdminUser]

@@ -4,21 +4,12 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
 from my_app.models import SubTask
 from my_app.serializers import SubTaskSerializer
 from my_app.serializers import SubTaskCreateSerializer
-# Задание 2:
-# Добавить пагинацию в отображение списка подзадач.
-# На одну страницу должно отображаться не более 5 объектов.
-# Отображение объектов должно идти в порядке убывания даты
-# (от самого последнего добавленного объекта к самому первому)
-# Задание 3:
-# Добавить или обновить, если уже есть, эндпоинт на получение списка всех подзадач по названию главной задачи и статусу подзадач.
-# Если фильтр параметры в запросе не передавались - выводить данные по умолчанию, с учётом пагинации.
-# Если бы передан фильтр параметр названия главной задачи - выводить данные по этой главной задаче.
-# Если был передан фильтр параметр конкретного статуса подзадачи - выводить данные по этому статусу.
-# Если были переданы оба фильтра - выводить данные в соответствии с этими фильтрами.
+
 
 # class SubTaskListAPIView(APIView, PageNumberPagination):
 #     page_size = 5
@@ -134,15 +125,7 @@ from my_app.serializers import SubTaskCreateSerializer
 #         )
 
 # ----------------------------------------------------------------------------------------------------------------------
-# Задание 2: Замена представлений для подзадач (SubTasks) на Generic Views
-# Шаги для выполнения:
-# Замените классы представлений для подзадач на Generic Views:
-# Используйте ListCreateAPIView для создания и получения списка подзадач.
-# Используйте RetrieveUpdateDestroyAPIView для получения, обновления и удаления подзадач.
-# Реализуйте фильтрацию, поиск и сортировку:
-# Реализуйте фильтрацию по полям status и deadline.
-# Реализуйте поиск по полям title и description.
-# Добавьте сортировку по полю created_at.
+
 
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from django.db.models import Q
@@ -152,6 +135,7 @@ class SubTaskListCreateGenericView(ListCreateAPIView):
 
     queryset = SubTask.objects.all()
     serializer_class = SubTaskSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -187,3 +171,4 @@ class SubTaskListCreateGenericView(ListCreateAPIView):
 class SubTaskDetailGenericView(RetrieveUpdateDestroyAPIView):
     queryset = SubTask.objects.all()
     serializer_class = SubTaskSerializer
+    permission_classes = [IsAdminUser]

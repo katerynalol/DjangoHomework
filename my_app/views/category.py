@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from django.db.models import Count
+from rest_framework.permissions import IsAdminUser
 
 from my_app.models import Category
 from my_app.serializers import CategoryCreateSerializer, CategoryCountSerializer
@@ -20,6 +21,7 @@ from my_app.serializers import CategoryCreateSerializer, CategoryCountSerializer
 
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects
+    permission_classes = [IsAdminUser]
 
     def get_serializer_class(self):
         if self.action in {'list', 'count_tasks'}:
