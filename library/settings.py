@@ -161,7 +161,7 @@ LOGGING = {
         },
 
         "sql": {
-            "format": "[{levelname}] {asctime} {name} | duration={duration} | sql={message}",
+            "format": "[{levelname}] {asctime} {name} | sql={message}",
             "style": "{",
         },
     },
