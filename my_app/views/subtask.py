@@ -127,7 +127,7 @@ from my_app.serializers import SubTaskCreateSerializer
 # ----------------------------------------------------------------------------------------------------------------------
 
 
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from django.db.models import Q
 
 
@@ -136,6 +136,10 @@ class SubTaskListCreateGenericView(ListCreateAPIView):
     queryset = SubTask.objects.all()
     serializer_class = SubTaskSerializer
     permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.validated_data["owner"] = self.request.user
+        serializer.save()
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -172,3 +176,11 @@ class SubTaskDetailGenericView(RetrieveUpdateDestroyAPIView):
     queryset = SubTask.objects.all()
     serializer_class = SubTaskSerializer
     permission_classes = [IsAdminUser]
+
+
+class MySubTaskListView(ListAPIView):
+    serializer_class = SubTaskSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return SubTask.objects.filter(owner=self.request.user)
