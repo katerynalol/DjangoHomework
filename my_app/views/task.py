@@ -8,6 +8,8 @@ from django.db.models import Count
 from datetime import datetime
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
+from django.db.models import Q
 
 from my_app.serializers import TaskSerializer
 from my_app.models import Task
@@ -147,12 +149,6 @@ def get_stat(request: Request)-> Response:
         status=status.HTTP_200_OK
     )
 # ----------------------------------------------------------------------------------------------------------------------
-
-
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from django.db.models import Q
-
-
 # class TaskPagination(PageNumberPagination):
 #     page_size = 5
 #     page_size_query_param = 'page_size'
@@ -175,6 +171,12 @@ class TaskListCreateGenericView(ListCreateAPIView):
         'суббота': 7,
         'воскресенье': 1
     }
+
+
+    def perform_create(self, serializer):
+        serializer.validated_data["owner"] = self.request.user
+        serializer.save()
+
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -214,3 +216,11 @@ class TaskDetailGenericView(RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     permission_classes = [IsAdminUser]
+
+
+class MyTaskListView(ListAPIView):
+    serializer_class = TaskSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Task.objects.filter(owner=self.request.user)
