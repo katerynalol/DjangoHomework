@@ -21,10 +21,12 @@ from rest_framework_simplejwt.views import (TokenObtainPairView,TokenRefreshView
 
 from my_app.views.task import (TaskListCreateGenericView,
                               TaskDetailGenericView,
-                              get_stat
+                              get_stat,
+                              MyTaskListView
                                )
 from my_app.views.subtask import (SubTaskListCreateGenericView,
-                                SubTaskDetailGenericView
+                                SubTaskDetailGenericView,
+                                MySubTaskListView
                                )
 from my_app.views.category import CategoryViewSet
 
@@ -40,9 +42,12 @@ urlpatterns = [
     path('task/', TaskListCreateGenericView.as_view()),
     path('task/<int:pk>/', TaskDetailGenericView.as_view()),
     path('task/stat/', get_stat),
+    path('task/my/', MyTaskListView.as_view()),
 
     path('subtasks/', SubTaskListCreateGenericView.as_view()),
     path('subtasks/<int:pk>/', SubTaskDetailGenericView.as_view()),
+    path('subtasks/my/', MySubTaskListView.as_view()),
+
 ]
 
 urlpatterns += router.urls
