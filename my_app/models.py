@@ -1,8 +1,11 @@
 from datetime import datetime
-
 from django.db import models
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.utils import timezone
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 
 STATUS_CHOICES = [
@@ -52,6 +55,12 @@ class Task(models.Model):
         verbose_name="Дата и время создания",
         auto_now_add=True
     )
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='tasks',
+        verbose_name="Владелец задачи"
+    )
 
     def __str__(self):
         return self.title
@@ -99,6 +108,12 @@ class SubTask(models.Model):
     created_at: datetime = models.DateTimeField(
         verbose_name="Дата и время создания",
         auto_now_add=True
+    )
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='subtasks',
+        verbose_name="Владелец подзадачи"
     )
 
     def __str__(self):
