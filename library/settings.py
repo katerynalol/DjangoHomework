@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'drf_spectacular',
     'rest_framework',
     'rest_framework_simplejwt',
     'my_app.apps.MyAppConfig',
@@ -124,11 +125,64 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+
     'DEFAULT_PAGINATION_CLASS': 'paginators.MyCustomCursorPagination',
 
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Приложение для управления задачами',
+    'DESCRIPTION': 'Работа через Session + JWT токены для API запросов.',
+    'VERSION': '1.0.0',
+    "OAS_VERSION": "3.0.3",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SERVE_PUBLIC": False,
+    "SERVE_PERMISSIONS": [
+        "rest_framework.permissions.IsAdminUser",
+    ],
+    "SERVE_AUTHENTICATION": [
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    "AUTHENTICATION_WHITELIST": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+
+        "displayOperationId": True,
+
+        "persistAuthorization": True,
+
+        "filter": True,
+
+        "tryItOutEnabled": True,
+
+        "docExpansion": "list",
+
+        "defaultModelsExpandDepth": 2,
+
+        "defaultModelExpandDepth": 2,
+
+        "displayRequestDuration": True,
+
+        "tagsSorter": "alpha",
+
+        "operationsSorter": "alpha",
+    },
+    "SWAGGER_UI_OAUTH2_CONFIG": {},
+    "REDOC_UI_SETTINGS": {},
+    "COMPONENT_SPLIT_REQUEST": True,
+    "SORT_OPERATIONS": True,
+    "SORT_OPERATION_PARAMETERS": True,
+    "CONTACT": {
+
+        "name": "Kateryna Korzun",
+        "email": "katua.korzun@gmail.com",
+    },
 }
 
 SIMPLE_JWT = {

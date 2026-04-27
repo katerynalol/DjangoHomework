@@ -1,0 +1,955 @@
+openapi: 3.0.3
+info:
+  title: Приложение для управления задачами
+  version: 1.0.0
+  description: Работа через Session + JWT токены для API запросов.
+  contact:
+    name: Kateryna Korzun
+    email: katua.korzun@gmail.com
+paths:
+  /categories/:
+    get:
+      operationId: categories_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      tags:
+      - categories
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCategoryCountList'
+          description: ''
+    post:
+      operationId: categories_create
+      tags:
+      - categories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CategoryCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CategoryCreateRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryCreate'
+          description: ''
+  /categories/{id}/:
+    get:
+      operationId: categories_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Category.
+        required: true
+      tags:
+      - categories
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryCreate'
+          description: ''
+    put:
+      operationId: categories_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Category.
+        required: true
+      tags:
+      - categories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CategoryCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CategoryCreateRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryCreate'
+          description: ''
+    patch:
+      operationId: categories_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Category.
+        required: true
+      tags:
+      - categories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCategoryCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCategoryCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCategoryCreateRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryCreate'
+          description: ''
+    delete:
+      operationId: categories_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Category.
+        required: true
+      tags:
+      - categories
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /categories/count_tasks/:
+    get:
+      operationId: categories_count_tasks_retrieve
+      tags:
+      - categories
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryCount'
+          description: ''
+  /login/:
+    post:
+      operationId: login_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /refresh-token/:
+    post:
+      operationId: refresh_token_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - refresh-token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /subtasks/:
+    get:
+      operationId: subtasks_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      tags:
+      - subtasks
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSubTaskList'
+          description: ''
+    post:
+      operationId: subtasks_create
+      tags:
+      - subtasks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubTaskRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SubTaskRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SubTaskRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubTask'
+          description: ''
+  /subtasks/{id}/:
+    get:
+      operationId: subtasks_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - subtasks
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubTask'
+          description: ''
+    put:
+      operationId: subtasks_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - subtasks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubTaskRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SubTaskRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SubTaskRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubTask'
+          description: ''
+    patch:
+      operationId: subtasks_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - subtasks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSubTaskRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSubTaskRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSubTaskRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubTask'
+          description: ''
+    delete:
+      operationId: subtasks_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - subtasks
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /subtasks/my/:
+    get:
+      operationId: subtasks_my_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      tags:
+      - subtasks
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSubTaskList'
+          description: ''
+  /task/:
+    get:
+      operationId: task_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      tags:
+      - task
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTaskList'
+          description: ''
+    post:
+      operationId: task_create
+      tags:
+      - task
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TaskRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TaskRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: ''
+  /task/{id}/:
+    get:
+      operationId: task_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - task
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+          description: ''
+    put:
+      operationId: task_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - task
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TaskCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TaskCreateRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskCreate'
+          description: ''
+    patch:
+      operationId: task_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - task
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedTaskCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedTaskCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTaskCreateRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskCreate'
+          description: ''
+    delete:
+      operationId: task_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - task
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /task/my/:
+    get:
+      operationId: task_my_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      tags:
+      - task
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTaskList'
+          description: ''
+  /task/stat/:
+    get:
+      operationId: task_stat_retrieve
+      tags:
+      - task
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+components:
+  schemas:
+    CategoryCount:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: Название категории
+          maxLength: 50
+        task_count:
+          type: integer
+          readOnly: true
+        is_deleted:
+          type: boolean
+      required:
+      - id
+      - name
+      - task_count
+    CategoryCreate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: Название категории
+          maxLength: 50
+        is_deleted:
+          type: boolean
+        deleted_at:
+          type: string
+          format: date-time
+          nullable: true
+          title: Дата и время удаления
+      required:
+      - id
+      - name
+    CategoryCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: Название категории
+          maxLength: 50
+        is_deleted:
+          type: boolean
+        deleted_at:
+          type: string
+          format: date-time
+          nullable: true
+          title: Дата и время удаления
+      required:
+      - name
+    PaginatedCategoryCountList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryCount'
+    PaginatedSubTaskList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubTask'
+    PaginatedTaskList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+    PatchedCategoryCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: Название категории
+          maxLength: 50
+        is_deleted:
+          type: boolean
+        deleted_at:
+          type: string
+          format: date-time
+          nullable: true
+          title: Дата и время удаления
+    PatchedSubTaskRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          title: Название подзадачи
+          maxLength: 100
+        description:
+          type: string
+          minLength: 5
+          title: Описание подзадачи
+          maxLength: 500
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          title: Статус подзадачи
+        owner:
+          type: integer
+          title: Владелец подзадачи
+    PatchedTaskCreateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          title: Название задачи
+          maxLength: 100
+        description:
+          type: string
+          minLength: 5
+          title: Описание задачи
+          maxLength: 500
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          title: Статус задачи
+        deadline:
+          type: string
+          format: date-time
+          title: Дата и время дедлайна
+    StatusEnum:
+      enum:
+      - New
+      - In progress
+      - Pending
+      - Blocked
+      - Done
+      type: string
+      description: |-
+        * `New` - New task
+        * `In progress` - Active task
+        * `Pending` - Pending...
+        * `Blocked` - Blocked
+        * `Done` - Finished
+    SubTask:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          title: Название подзадачи
+          maxLength: 100
+        description:
+          type: string
+          title: Описание подзадачи
+          minLength: 5
+          maxLength: 500
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          title: Статус подзадачи
+        owner:
+          type: integer
+          title: Владелец подзадачи
+      required:
+      - description
+      - id
+      - owner
+      - title
+    SubTaskRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          title: Название подзадачи
+          maxLength: 100
+        description:
+          type: string
+          minLength: 5
+          title: Описание подзадачи
+          maxLength: 500
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          title: Статус подзадачи
+        owner:
+          type: integer
+          title: Владелец подзадачи
+      required:
+      - description
+      - owner
+      - title
+    Task:
+      type: object
+      properties:
+        title:
+          type: string
+          title: Название задачи
+          maxLength: 100
+        description:
+          type: string
+          title: Описание задачи
+          minLength: 5
+          maxLength: 500
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          title: Статус задачи
+        deadline:
+          type: string
+          format: date-time
+          title: Дата и время дедлайна
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата и время создания
+        owner:
+          type: integer
+          title: Владелец задачи
+      required:
+      - created_at
+      - deadline
+      - description
+      - owner
+      - title
+    TaskCreate:
+      type: object
+      properties:
+        title:
+          type: string
+          title: Название задачи
+          maxLength: 100
+        description:
+          type: string
+          title: Описание задачи
+          minLength: 5
+          maxLength: 500
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          title: Статус задачи
+        deadline:
+          type: string
+          format: date-time
+          title: Дата и время дедлайна
+      required:
+      - deadline
+      - description
+      - title
+    TaskCreateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          title: Название задачи
+          maxLength: 100
+        description:
+          type: string
+          minLength: 5
+          title: Описание задачи
+          maxLength: 500
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          title: Статус задачи
+        deadline:
+          type: string
+          format: date-time
+          title: Дата и время дедлайна
+      required:
+      - deadline
+      - description
+      - title
+    TaskRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          title: Название задачи
+          maxLength: 100
+        description:
+          type: string
+          minLength: 5
+          title: Описание задачи
+          maxLength: 500
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          title: Статус задачи
+        deadline:
+          type: string
+          format: date-time
+          title: Дата и время дедлайна
+        owner:
+          type: integer
+          title: Владелец задачи
+      required:
+      - deadline
+      - description
+      - owner
+      - title
+    TokenObtainPair:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          readOnly: true
+      required:
+      - access
+      - refresh
+    TokenObtainPairRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+          minLength: 1
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - password
+      - username
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+      required:
+      - access
+    TokenRefreshRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - refresh
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
