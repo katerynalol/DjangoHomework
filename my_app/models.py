@@ -28,8 +28,7 @@ class CategoryManager(models.Manager):
 class Task(models.Model):
     title: str = models.CharField(
         max_length=100,
-        verbose_name="Название задачи",
-        unique_for_date="created_at"
+        verbose_name="Название задачи"
     )
     description: str = models.TextField(
         verbose_name="Описание задачи",
@@ -72,7 +71,7 @@ class Task(models.Model):
 
         constraints = [
             models.UniqueConstraint(
-                fields=['title'],
+                fields=['title', 'created_at'],
                 name='unique_task'
             )
         ]

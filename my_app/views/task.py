@@ -11,7 +11,8 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from django.db.models import Q
 
-from my_app.serializers import TaskSerializer
+from my_app.permissions import IsOwner
+from my_app.serializers import TaskSerializer, TaskCreateSerializer
 from my_app.models import Task
 
 
@@ -214,8 +215,12 @@ class TaskListCreateGenericView(ListCreateAPIView):
 
 class TaskDetailGenericView(RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
-    serializer_class = TaskSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsOwner]
+
+    def get_serializer_class(self):
+        if self.request.method in ['PUT', 'PATCH']:
+            return TaskCreateSerializer
+        return TaskSerializer
 
 
 class MyTaskListView(ListAPIView):

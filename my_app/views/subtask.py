@@ -6,6 +6,7 @@ from rest_framework.exceptions import NotFound
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
+from my_app.permissions import IsOwner
 from my_app.models import SubTask
 from my_app.serializers import SubTaskSerializer
 from my_app.serializers import SubTaskCreateSerializer
@@ -175,7 +176,7 @@ class SubTaskListCreateGenericView(ListCreateAPIView):
 class SubTaskDetailGenericView(RetrieveUpdateDestroyAPIView):
     queryset = SubTask.objects.all()
     serializer_class = SubTaskSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsOwner]
 
 
 class MySubTaskListView(ListAPIView):

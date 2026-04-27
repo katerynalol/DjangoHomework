@@ -40,8 +40,7 @@ class TaskCreateSerializer(serializers.ModelSerializer):
         "title",
         "description",
         "status",
-        "deadline",
-        "owner"
+        "deadline"
     ]
     def validate_deadline(self, value):
         if value < timezone.now():
