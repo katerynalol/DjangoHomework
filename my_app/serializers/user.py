@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 import re
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
+from typing import Any
+from django.contrib.auth import authenticate
 
 User = get_user_model()
 NAME_RE = re.compile(r"[a-zA-Z]+(?:[-'][a-zA-Z]+)*")
@@ -111,3 +113,51 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         )
 
         return user
+
+
+class UserLoginSerializer(serializers.Serializer):
+    username = serializers.CharField(
+        required=True,
+        write_only=True,
+        max_length=30,
+        trim_whitespace=True
+    )
+    password = serializers.CharField(
+        required=True,
+        write_only=True,
+        max_length=30,
+    )
+
+    def validate(self, attrs: dict[str, str]) -> dict[str, Any]:
+        username = attrs.get('username')
+        password = attrs.get('password')
+
+        if not username or not password:
+            raise serializers.ValidationError(
+                {
+                    "message": "Для входа в систему необходимо указать имя пользователя и пароль."
+                }
+            )
+
+        user = authenticate(
+            request=self.context.get('request'),
+            username=username,
+            password=password
+        )
+
+        if not user:
+            raise serializers.ValidationError(
+                {
+                    "message": "Неверное имя пользователя или пароль"
+                }
+            )
+
+        if not user.is_active:
+            raise serializers.ValidationError(
+                {
+                    "message": "Учетная запись пользователя отключена."
+                }
+            )
+
+        attrs['user'] = user
+        return attrs
