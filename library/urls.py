@@ -35,7 +35,7 @@ from my_app.views.subtask import (SubTaskListCreateGenericView,
                                 MySubTaskListView
                                )
 from my_app.views.category import CategoryViewSet
-from my_app.views.auth import RegisterUserView
+from my_app.views.auth import RegisterUserView, LoginUser, RefreshTokenView, LogoutUser
 
 
 router = DefaultRouter()
@@ -46,8 +46,11 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
 
     path('auth/register/', RegisterUserView.as_view(), name='register'),
-    path('login/', TokenObtainPairView.as_view()),
-    path('refresh-token/', TokenRefreshView.as_view()),
+    path('auth/login/', LoginUser.as_view(), name='login'),
+    path('auth/refresh-token/', RefreshTokenView.as_view(), name='refresh-token'),
+    path('auth/logout/', LogoutUser.as_view(), name='logout'),
+    # path('login/', TokenObtainPairView.as_view()),
+    # path('refresh-token/', TokenRefreshView.as_view()),
 
     path('task/', TaskListCreateGenericView.as_view()),
     path('task/<int:pk>/', TaskDetailGenericView.as_view()),
