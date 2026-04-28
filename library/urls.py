@@ -35,6 +35,7 @@ from my_app.views.subtask import (SubTaskListCreateGenericView,
                                 MySubTaskListView
                                )
 from my_app.views.category import CategoryViewSet
+from my_app.views.auth import RegisterUserView
 
 
 router = DefaultRouter()
@@ -44,6 +45,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
 
+    path('auth/register/', RegisterUserView.as_view(), name='register'),
     path('login/', TokenObtainPairView.as_view()),
     path('refresh-token/', TokenRefreshView.as_view()),
 
