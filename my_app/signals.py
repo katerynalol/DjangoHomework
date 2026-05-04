@@ -8,27 +8,39 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 @receiver(pre_save, sender=Task)
+def store_old_status(sender, instance, **kwargs):
+    if not instance.pk:
+        instance._previous_status = None
+        return
+
+    try:
+        old_instance = Task.objects.only('status').get(pk=instance.pk)
+    except Task.DoesNotExist:
+        instance._previous_status = None
+
+    instance._previous_status = old_instance.status
+
+
+
+@receiver(post_save, sender=Task)
 def send_status_notification(sender, instance, created, **kwargs):
     if created:
         return
 
-    if not hasattr(instance, '_old_status'):
-        return
-
-    old_status = instance._old_status
+    old_status = instance._previous_status
     new_status = instance.status
 
     if not old_status or old_status == new_status:
         return
 
     owner = instance.owner
+
     if not owner or not owner.email:
         return
 
-
     subject = f'Статус задачи "{instance.title}" изменён'
     message = (
-        f'Здравствуйте, {owner.get_full_name() or owner.username}!\n\n'
+        f'Здравствуйте, {owner.username}!\n\n'
         f'Статус вашей задачи "{instance.title}" изменился:\n'
         f'  Было: {old_status}\n'
         f'  Стало: {new_status}'
