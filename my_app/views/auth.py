@@ -55,36 +55,6 @@ class LoginUser(APIView):
             )
 
 
-class RefreshTokenView(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        refresh_token = request.COOKIES.get('refresh_token') or request.data.get('refresh')
-
-        if not refresh_token:
-            return Response({
-                'error': 'Refresh токен обязателен'
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            refresh = RefreshToken(refresh_token)
-            access_token = refresh.access_token
-
-            response = Response({
-                'message': 'Токен успешно обновлен'
-            }, status=status.HTTP_200_OK)
-
-            from my_app.utils import set_access_cookie
-            set_access_cookie(response, str(access_token))
-
-            return response
-
-        except Exception as e:
-            return Response({
-                'error': 'Неверный refresh токен'
-            }, status=status.HTTP_401_UNAUTHORIZED)
-
-
 class LogoutUser(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -114,5 +84,3 @@ class LogoutUser(APIView):
         clear_jwt_cookies(response=response)
 
         return response
-
-
